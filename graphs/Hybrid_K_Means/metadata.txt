@@ -1,0 +1,281 @@
+⚖ 2. Feature Weighting
+🔹 What it is:
+
+Before clustering, we assign different weights to each feature.
+
+Example:
+
+weights = {'Recency': 1.5, 'Frequency': 1.0, 'Monetary': 2.0}
+
+🔹 Why we use it:
+
+Not all behaviors are equally important:
+
+Spending more money (Monetary) might matter more than purchase frequency.
+
+Recency might influence re-targeting more than raw frequency.
+
+So, we use feature weighting to guide K-Means —
+clusters will form giving more “pull” to high-weight features.
+
+🔹 How it affects K-Means:
+
+Normally, K-Means calculates Euclidean distance as:
+
+𝐷
+=
+(
+𝑟
+1
+−
+𝑟
+2
+)
+2
++
+(
+𝑓
+1
+−
+𝑓
+2
+)
+2
++
+(
+𝑚
+1
+−
+𝑚
+2
+)
+2
+D=
+(r
+1
+	​
+
+−r
+2
+	​
+
+)
+2
++(f
+1
+	​
+
+−f
+2
+	​
+
+)
+2
++(m
+1
+	​
+
+−m
+2
+	​
+
+)
+2
+	​
+
+
+After weighting:
+
+𝐷
+=
+𝑤
+𝑟
+(
+𝑟
+1
+−
+𝑟
+2
+)
+2
++
+𝑤
+𝑓
+(
+𝑓
+1
+−
+𝑓
+2
+)
+2
++
+𝑤
+𝑚
+(
+𝑚
+1
+−
+𝑚
+2
+)
+2
+D=
+w
+r
+	​
+
+(r
+1
+	​
+
+−r
+2
+	​
+
+)
+2
++w
+f
+	​
+
+(f
+1
+	​
+
+−f
+2
+	​
+
+)
+2
++w
+m
+	​
+
+(m
+1
+	​
+
+−m
+2
+	​
+
+)
+2
+	​
+
+
+So, a large 
+𝑤
+𝑚
+w
+m
+	​
+
+ makes monetary difference dominate distance —
+helping form clusters based on spending patterns.
+
+🧮 3. Standardization (Feature Scaling)
+🔹 What it is:
+
+Transform features to a similar scale — usually mean=0 and std=1.
+
+🔹 Why we use it:
+
+Because R, F, and M are measured in different units:
+
+Recency → days (0–400+)
+
+Frequency → counts (1–100+)
+
+Monetary → dollars or pounds (up to thousands)
+
+Without scaling, large-scale features (like Monetary) would dominate the clustering unfairly — even more than weights intend.
+
+🔹 How it’s done:
+scaler = StandardScaler()
+rfm_scaled = scaler.fit_transform(rfm_weighted)
+
+🔹 4. Finding the Optimal K (Elbow + Silhouette)
+🔹 What it is:
+
+K-Means needs a predefined number of clusters (k).
+We use two methods to find a good k automatically.
+
+a. Elbow Method:
+
+Plots within-cluster sum of squares (WCSS) vs. k
+
+Look for the “elbow” point where reduction slows down.
+
+b. Silhouette Score:
+
+Measures how well each point fits its own cluster vs. others
+
+Higher score = better separation
+
+🔹 Why we use it:
+
+So we don’t choose k arbitrarily — it’s data-driven.
+
+🔹 How it contributes:
+
+Your algorithm tests multiple k values (say 2–10), computes both scores, and then picks:
+
+best_k = silhouette_scores.index(max(silhouette_scores)) + 2
+
+
+✅ Ensures best-performing k for your specific dataset.
+
+🌀 5. Weighted K-Means Clustering
+🔹 What it is:
+
+We run standard K-Means, but on the weighted and scaled RFM features.
+
+🔹 Why we use it:
+
+K-Means minimizes the sum of squared distances between points and their cluster centroid — so after weighting, it effectively finds groups emphasizing chosen attributes.
+
+🔹 What happens internally:
+
+Randomly pick k centroids
+
+Assign each point to nearest centroid (based on weighted Euclidean distance)
+
+Recalculate centroids (weighted mean)
+
+Repeat until convergence
+
+🔹 How it contributes:
+
+Groups customers into behavioral clusters — e.g.:
+
+High spending, frequent buyers
+
+Rare buyers, low spenders
+
+Recently active but not high spenders
+
+🏷 6. Cluster Labeling (Customer Type Naming)
+🔹 What it is:
+
+After clustering, compute cluster averages:
+
+cluster_summary = rfm.groupby('Cluster')[['Recency','Frequency','Monetary']].mean()
+
+
+Then name clusters based on relative behavior (auto-generated logic):
+
+if low recency + high freq + high monetary → “Champions”
+if low recency + high freq → “Loyal”
+if high recency + low freq → “Lost”
+else → “Regular”
+
+🔹 Why we use it:
+
+This gives business meaning to numeric clusters — making the results interpretable.
+
+🔹 How it contributes:
+
+It translates numeric clusters into behavioral personas,
