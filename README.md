@@ -69,3 +69,7 @@ Clusters are labeled based on normalized RFM values:
 ### Run the app:
 ```bash
 streamlit run app.py
+
+
+pip install pandas numpy matplotlib seaborn scikit-learn streamlit openpyxl
+
