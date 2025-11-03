@@ -5,16 +5,19 @@
 ## Overview
 
 This project performs **Customer Segmentation** on the **Online Retail II (UCI)** dataset using **Weighted K-Means Clustering** based on **RFM (Recency, Frequency, Monetary)** analysis.
-It groups customers into meaningful behavioral segments, providing insight into purchase patterns for targeted marketing and retention strategies.
+By classifying customers into meaningful categories, businesses can design personalized marketing campaigns, improve customer retention, and enhance sales forecasting.
 
 ---
 
 ##  Objectives
 
-* To preprocess and analyze retail data using RFM features.
-* To apply **Weighted K-Means** to improve clustering accuracy.
-* To determine the optimal number of clusters using **Elbow** and **Silhouette** methods.
-* To build a **Streamlit web app** for real-time customer segment prediction.
+* **Understand customer behavior**: Analyze buying habits through RFM features.
+
+* **Data-driven segmentation**: Use Weighted K-Means to create interpretable customer groups.
+
+* **Optimize marketing efforts**: Enable targeted communication for each segment.
+
+* **Improve revenue and retention**: Identify valuable but at-risk customers for reactivation campaigns.
 
 ---
 
@@ -35,38 +38,31 @@ It groups customers into meaningful behavioral segments, providing insight into 
    * **Recency** – Days since the last purchase
    * **Frequency** – Number of unique invoices
    * **Monetary** – Total amount spent
+5. Apply log transformation on Monetary to reduce skewness.
 
 ---
 
 ##  Methodology
 
-###  RFM Feature Computation
+### 1. RFM Feature Computation
 
 Each customer’s RFM score is calculated as follows:
 
-[
-\text{Recency} = (\text{Max InvoiceDate}) - (\text{Last Purchase Date})
-]
+$$\text{Recency} = (\text{Max InvoiceDate}) - (\text{Last Purchase Date})$$
 
-[
-\text{Frequency} = \text{Count of Unique Invoices}
-]
+$$\text{Frequency} = \text{Count of Unique Invoices}$$
 
-[
-\text{Monetary} = \sum (\text{Quantity} \times \text{UnitPrice})
-]
+$$\text{Monetary} = \sum (\text{Quantity} \times \text{UnitPrice})$$
 
 ---
 
-### 2️ Weighted K-Means Clustering
+### 2️. Weighted K-Means Clustering
 
 Unlike standard K-Means, **Weighted K-Means** assigns a weight to each feature to control its influence on the distance metric.
 
 #### Distance Calculation
 
-[
-D(x_i, \mu_j) = \sqrt{ \sum_{f=1}^{n} w_f \cdot (x_{if} - \mu_{jf})^2 }
-]
+$$D(x_i, \mu_j) = \sqrt{ \sum_{f=1}^{n} w_f \cdot (x_{if} - \mu_{jf})^2 }$$
 
 where:
 
@@ -76,13 +72,11 @@ where:
 
 #### Centroid Update
 
-[
-\mu_j = \frac{1}{|C_j|} \sum_{x_i \in C_j} x_i
-]
+$$\mu_j = \frac{1}{|C_j|} \sum_{x_i \in C_j} x_i$$
 
 ---
 
-### 3️ Optimal k Selection
+### 3️. Optimal k Selection
 
 * **Elbow Method:**
   Plot the **Within-Cluster Sum of Squares (WCSS)** versus k and choose the point where the curve “bends”.
@@ -90,9 +84,7 @@ where:
 * **Silhouette Score:**
   Measure how similar each sample is to its own cluster compared to others.
 
-[
-S = \frac{b - a}{\max(a, b)}
-]
+$$S = \frac{b - a}{\max(a, b)}$$
 
 where:
 
@@ -182,7 +174,7 @@ Run an interactive web app to input R, F, M values and get real-time predictions
 
 ---
 
-## 🧪 Results & Inferences
+##  Results & Inferences
 
 * Weighted K-Means improves interpretability by emphasizing **Monetary Value**.
 * Optimal clusters (k) typically found between 4 and 6.
@@ -206,14 +198,6 @@ ai_ml_project/
 
 ---
 
-##  Future Improvements
-
-* Extend to other countries for cross-regional analysis.
-* Integrate **DBSCAN** or **Gaussian Mixture Models** for comparison.
-* Add dashboard visuals to Streamlit app (cluster size, average RFM).
-* Deploy app on **Streamlit Cloud** for public access.
-
----
 
 
 
